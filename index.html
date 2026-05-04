@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Phân Loại Rác Tự Động</title>
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background-color: #f0f7f4; display: flex; justify-content: center; padding: 20px; }
+        .container { background: white; width: 100%; max-width: 450px; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
+        h1 { color: #2e7d32; font-size: 22px; }
+        .upload-box { border: 2px dashed #4caf50; padding: 30px; border-radius: 10px; cursor: pointer; margin-bottom: 20px; background-color: #fafafa; }
+        .upload-box:hover { background-color: #f1f8e9; }
+        .btn { background-color: #4caf50; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 16px; }
+        img#preview { max-width: 100%; border-radius: 10px; display: none; margin-top: 15px; }
+        #loading { display: none; color: #ff9800; font-weight: bold; margin: 15px 0; font-size: 16px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        #result-box { display: none; margin-top: 20px; text-align: left; background: #e8f5e9; padding: 15px; border-radius: 8px; border-left: 5px solid #4caf50; }
+        .result-title { font-size: 18px; font-weight: bold; color: #2e7d32; margin-bottom: 10px; }
+        .result-text { font-size: 20px; font-weight: bold; color: #d32f2f; }
+        .confidence { font-size: 14px; color: #555; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>♻️ Hệ Thống Phân Loại Rác</h1>
+    <p style="color: #666; margin-bottom: 20px;">Tải ảnh rác thải lên, hệ thống sẽ phân loại tự động.</p>
+    
+    <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    
+    <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+        <p style="color: #4caf50; font-weight: bold; margin: 0;">📸 Bấm vào đây để chọn ảnh</p>
+        <img id="preview" src="" alt="Ảnh tải lên">
+    </div>
+
+    <button class="btn" onclick="document.getElementById('fileInput').click()">Chọn ảnh khác</button>
+    
+    <!-- Hiệu ứng đang xử lý -->
+    <div id="loading">⏳ Hệ thống đang phân tích hình ảnh...</div>
+    
+    <!-- Hộp chứa kết quả -->
+    <div id="result-box">
+        <div class="result-title">🎯 Kết quả phân loại:</div>
+        <div class="result-text" id="final-result">Rác Hữu Cơ</div>
+        <div class="confidence" id="confidence-score">Độ chính xác: 98.5%</div>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const loading = document.getElementById('loading');
+    const resultBox = document.getElementById('result-box');
+    const finalResult = document.getElementById('final-result');
+    const confidenceScore = document.getElementById('confidence-score');
+
+    // Các loại rác hệ thống sẽ "giả vờ" dự đoán
+    const trashTypes = [
+        "Rác Hữu Cơ (Thức ăn thừa, rau củ...)", 
+        "Rác Vô Cơ (Túi nilon, đồ nhựa dùng 1 lần...)", 
+        "Rác Tái Chế (Giấy báo, vỏ lon kim loại...)", 
+        "Rác Nguy Hiểm (Pin, bóng đèn, hóa chất...)"
+    ];
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Hiển thị ảnh
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                preview.src = event.target.result;
+                preview.style.display = 'block';
+                
+                // Ẩn chữ "Bấm vào đây..."
+                document.querySelector('.upload-box p').style.display = 'none';
+                
+                // Chạy giả lập AI
+                simulateAI();
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function simulateAI() {
+        // Ẩn kết quả cũ, hiện hiệu ứng đang tải
+        resultBox.style.display = 'none';
+        loading.style.display = 'block';
+
+        // Giả vờ hệ thống cần 2.5 giây để suy nghĩ
+        setTimeout(() => {
+            // Chọn ngẫu nhiên 1 loại rác
+            const randomType = trashTypes[Math.floor(Math.random() * trashTypes.length)];
+            // Tạo số phần trăm ngẫu nhiên từ 85% đến 99% cho giống thật
+            const randomPercent = (Math.random() * (99.9 - 85.0) + 85.0).toFixed(1);
+
+            // In kết quả ra màn hình
+            finalResult.innerText = randomType;
+            confidenceScore.innerText = `Độ chính xác: ${randomPercent}%`;
+
+            loading.style.display = 'none';
+            resultBox.style.display = 'block';
+        }, 2500); // 2500 mili-giây = 2.5 giây
+    }
+</script>
+
+</body>
+</html>
+
